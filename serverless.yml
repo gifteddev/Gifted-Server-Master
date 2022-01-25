@@ -1,0 +1,79 @@
+service: shopify
+
+provider:
+  name: aws
+  profile: gifted
+  runtime: nodejs12.x
+  stage: ${opt:stage,'dev'}
+  endpointType: REGIONAL
+  memorySize: 256 # optional, in MB, default is 1024
+  timeout: 30 # optional, in seconds, default is 6
+  region: us-east-1
+  role: arn:aws:iam::862605579605:role/gifted_lambda
+  resourcePolicy:
+    - Effect: Allow
+      Principal: "*"
+      Action: execute-api:Invoke
+      Resource:
+        - execute-api:/*/*/*
+  package:
+    include: src/*.js
+      node_modules/**
+      
+    individually: true # serverless optimization
+  environment:
+    SHOPIFY_SECRET_NAME: Gifted
+
+# Custom variables
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+  stage: ${opt:stage, self:provider.stage}
+  serverless-offline:
+    resourceRoutes: true
+  splitStacks:
+    perFunction: false
+    perType: true
+  customDomain:
+    basePath: ""
+    domain:
+    domainName: givingwithgifted.com
+    certificateName: "givingwithgifted.com"
+    createRoute53Record: true
+    endpointType: "regional"
+
+# Functions
+functions:
+  shopify:
+    handler: lambda.handler
+    package:
+      include:
+        - public/**
+    events:
+      - http:
+          path: /shopify
+          method: ANY
+          private: false
+          package:
+            include:
+              - public/**
+          cors:
+            origin: "*"
+            allowCredentials: false
+      - http:
+          path: "/shopify/{proxy+}"
+          method: ANY
+          private: false
+          package:
+            include:
+              - public/**
+          cors:
+            origin: "*"
+            allowCredentials: false
+
+          # Plugins
+plugins:
+  - serverless-offline
+  - serverless-webpack
+  - serverless-domain-manager

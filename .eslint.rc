@@ -1,0 +1,31 @@
+module.exports = {
+    parser: '@typescript-eslint/parser',
+    plugins: ['@typescript-eslint'],
+    extends: ['plugin:@typescript-eslint/recommended'],
+    env: {
+        "browser": false,
+        "es6": true,
+        node: true
+    },
+    globals: {
+        Atomics: "readonly",
+        SharedArrayBuffer: "readonly"
+    },
+    parserOptions: {
+        ecmaVersion: 2018,
+        sourceType: "module"
+    },
+    rules: {
+        "@typescript-eslint/array-type": ["warn", "generic"],
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/explicit-function-return-type": 0,
+        "@typescript-eslint/explicit-member-accessibility": 0,
+        "@typescript-eslint/interface-name-prefix": 0,
+        "@typescript-eslint/member-delimiter-style":0,
+        'no-console': 0,
+        "@typescript-eslint/camelcase":0,
+        eqeqeq: ["error", "always"],
+        // OMG, the quotes rule has both double and single quotes (MIND BLOWN!)
+        quotes: ["error", "single", { "allowTemplateLiterals": true }]
+    }
+};
